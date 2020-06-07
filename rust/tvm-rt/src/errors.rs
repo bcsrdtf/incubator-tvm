@@ -48,7 +48,10 @@ pub enum NDArrayError {
     #[error("a shape error occurred in the Rust ndarray library")]
     ShapeError(#[from] ndarray::ShapeError),
     #[error("Expected type `{expected}` but found `{actual}`")]
-    DataTypeMismatch { expected: DataType, actual: DataType }
+    DataTypeMismatch {
+        expected: DataType,
+        actual: DataType,
+    },
 }
 
 #[derive(Debug, Error)]

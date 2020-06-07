@@ -2,8 +2,8 @@ use std::convert::TryFrom;
 use std::convert::TryInto;
 use std::ffi::CString;
 
-use crate::external_func;
 use crate::errors::Error;
+use crate::external_func;
 
 use tvm_sys::{ArgValue, RetValue};
 

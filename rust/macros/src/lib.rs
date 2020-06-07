@@ -18,6 +18,8 @@
  */
 
 use proc_macro::TokenStream;
+
+mod external;
 mod import_module;
 mod object;
 
@@ -30,4 +32,9 @@ pub fn import_module(input: TokenStream) -> TokenStream {
 pub fn macro_impl(input: TokenStream) -> TokenStream {
     // let input = proc_macro2::TokenStream::from(input);
     TokenStream::from(object::macro_impl(input))
+}
+
+#[proc_macro]
+pub fn external(input: TokenStream) -> TokenStream {
+    external::macro_impl(input)
 }

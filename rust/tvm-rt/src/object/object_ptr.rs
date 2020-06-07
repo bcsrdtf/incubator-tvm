@@ -194,7 +194,7 @@ impl<'a, T: IsObject> TryFrom<RetValue> for ObjectPtr<T> {
                 let optr = ObjectPtr::from_raw(handle).ok_or(Error::Null)?;
                 optr.downcast()
             }
-            _ => Err(Error::downcast(format!("{:?}", ret_value), "ObjectHandle"))
+            _ => Err(Error::downcast(format!("{:?}", ret_value), "ObjectHandle")),
         }
     }
 }

@@ -47,9 +47,9 @@
 //! [`copy_from_buffer`]:struct.NDArray.html#method.copy_from_buffer
 //! [`copy_to_ctx`]:struct.NDArray.html#method.copy_to_ctx
 
-use std::{convert::TryFrom, mem, os::raw::c_int, ptr, slice, str::FromStr};
 use std::convert::TryInto;
 use std::ffi::c_void;
+use std::{convert::TryFrom, mem, os::raw::c_int, ptr, slice, str::FromStr};
 
 use crate::errors::NDArrayError;
 
@@ -190,7 +190,9 @@ impl NDArray {
     /// assert_eq!(ndarray.to_vec::<i32>().unwrap(), data);
     /// ```
     pub fn to_vec<T>(&self) -> Result<Vec<T>, NDArrayError> {
-        if self.shape().is_some() { return Err(NDArrayError::EmptyArray); }
+        if self.shape().is_some() {
+            return Err(NDArrayError::EmptyArray);
+        }
         let earr = NDArray::empty(
             self.shape().ok_or(NDArrayError::MissingShape)?,
             Context::cpu(0),
@@ -241,11 +243,10 @@ impl NDArray {
     /// Copies the NDArray to another target NDArray.
     pub fn copy_to_ndarray(&self, target: NDArray) -> Result<NDArray, NDArrayError> {
         if self.dtype() != target.dtype() {
-            return Err(
-                NDArrayError::DataTypeMismatch {
-                    expected: self.dtype(),
-                    actual: target.dtype()
-                });
+            return Err(NDArrayError::DataTypeMismatch {
+                expected: self.dtype(),
+                actual: target.dtype(),
+            });
         }
 
         check_call!(ffi::TVMArrayCopyFromTo(
@@ -307,7 +308,9 @@ macro_rules! impl_from_ndarray_rustndarray {
             type Error = NDArrayError;
 
             fn try_from(nd: &NDArray) -> Result<ArrayD<$type>, Self::Error> {
-                if nd.shape().is_some() { return Err(NDArrayError::MissingShape); }
+                if nd.shape().is_some() {
+                    return Err(NDArrayError::MissingShape);
+                }
                 assert_eq!(nd.dtype(), DataType::from_str($type_name)?, "Type mismatch");
                 Ok(Array::from_shape_vec(
                     &*nd.shape().ok_or(NDArrayError::MissingShape)?,
@@ -320,7 +323,9 @@ macro_rules! impl_from_ndarray_rustndarray {
             type Error = NDArrayError;
 
             fn try_from(nd: &mut NDArray) -> Result<ArrayD<$type>, Self::Error> {
-                if nd.shape().is_some() { return Err(NDArrayError::MissingShape) };
+                if nd.shape().is_some() {
+                    return Err(NDArrayError::MissingShape);
+                };
                 assert_eq!(nd.dtype(), DataType::from_str($type_name)?, "Type mismatch");
                 Ok(Array::from_shape_vec(
                     &*nd.shape().ok_or(NDArrayError::MissingShape)?,

@@ -30,14 +30,9 @@
 //!
 //! Checkout the `examples` repository for more details.
 
-pub use crate::{
-    errors::*,
-    function::Function,
-    module::Module,
-    ndarray::NDArray,
-};
+pub use crate::{errors::*, function::Function, module::Module, ndarray::NDArray};
 
-pub use tvm_rt::{Context, DeviceType, DataType};
+pub use tvm_rt::{Context, DataType, DeviceType};
 
 pub use tvm_rt::context;
 pub use tvm_rt::errors;

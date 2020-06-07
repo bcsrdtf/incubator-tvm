@@ -32,8 +32,8 @@ use std::{
     ptr, slice,
 };
 
-use crate::errors::Error;
 use super::Function;
+use crate::errors::Error;
 
 pub use tvm_sys::{ffi, ArgValue, RetValue};
 

@@ -25,11 +25,7 @@ use std::convert::TryFrom;
 // use std::ffi::c_void;
 
 use crate::{ArgValue, Module, NDArray, RetValue};
-use tvm_sys::{
-    errors::ValueDowncastError,
-    ffi::{TVMModuleHandle},
-    try_downcast,
-};
+use tvm_sys::{errors::ValueDowncastError, ffi::TVMModuleHandle, try_downcast};
 
 macro_rules! impl_handle_val {
     ($type:ty, $variant:ident, $inner_type:ty, $ctor:path) => {

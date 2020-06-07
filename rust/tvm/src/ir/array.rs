@@ -1,13 +1,12 @@
-use std::convert::{TryFrom};
+use std::convert::TryFrom;
 use std::marker::PhantomData;
 
 use crate::runtime::object::{ObjectRef, ToObjectRef};
 
-use tvm_rt::RetValue;
 use tvm_rt::external_func;
+use tvm_rt::RetValue;
 
 use anyhow::Result;
-
 
 #[derive(Clone)]
 pub struct Array<T: ToObjectRef> {
