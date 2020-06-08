@@ -60,6 +60,8 @@ pub enum Error {
     Downcast(#[from] tvm_sys::errors::ValueDowncastError),
     #[error("raw pointer passed across boundary was null")]
     Null,
+    #[error("failed to load module due to invalid path {0}")]
+    ModuleLoadPath(String),
 }
 
 impl Error {

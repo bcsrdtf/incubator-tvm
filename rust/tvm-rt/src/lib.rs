@@ -57,6 +57,8 @@ pub use tvm_sys::byte_array::ByteArray;
 pub use tvm_sys::datatype::DataType;
 use tvm_sys::ffi;
 
+pub use tvm_macros::external;
+
 // Macro to check the return call to TVM runtime shared library.
 #[macro_export]
 macro_rules! check_call {

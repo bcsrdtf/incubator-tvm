@@ -25,7 +25,6 @@
 //!
 //! See the tests and examples repository for more examples.
 
-use anyhow::Result;
 use lazy_static::lazy_static;
 use std::convert::TryFrom;
 use std::{
@@ -43,6 +42,8 @@ use crate::errors::Error;
 
 use super::to_boxed_fn::ToBoxedFn;
 use super::to_function::{ToFunction, Typed};
+
+pub type Result<T> = std::result::Result<T, Error>;
 
 lazy_static! {
     static ref GLOBAL_FUNCTIONS: Mutex<BTreeMap<String, Option<Function>>> = {
@@ -137,7 +138,7 @@ impl Function {
     }
 
     /// Calls the function that created from `Builder`.
-    pub fn invoke<'a>(&self, arg_buf: Vec<ArgValue<'a>>) -> Result<RetValue> {
+    pub fn invoke<'a>(&self, arg_buf: Vec<ArgValue<'a>>) -> Result<RetValue, Error> {
         let num_args = arg_buf.len();
         let (mut values, mut type_codes): (Vec<ffi::TVMValue>, Vec<ffi::TVMTypeCode>) =
             arg_buf.iter().map(|arg| arg.to_tvm_value()).unzip();
@@ -263,7 +264,7 @@ impl<'a> TryFrom<&ArgValue<'a>> for Function {
 /// let ret = boxed_fn(10, 20, 30).unwrap();
 /// assert_eq!(ret, 60);
 /// ```
-pub fn register<F, I, O, S: Into<String>>(f: F, name: S) -> Result<()>
+pub fn register<F, I, O, S: Into<String>>(f: F, name: S) -> Result<(), Error>
 where
     F: ToFunction<I, O>,
     F: Typed<I, O>,
@@ -274,7 +275,7 @@ where
 /// Register a function with explicit control over whether to override an existing registration or not.
 ///
 /// See `register` for more details on how to use the registration API.
-pub fn register_override<F, I, O, S: Into<String>>(f: F, name: S, override_: bool) -> Result<()>
+pub fn register_override<F, I, O, S: Into<String>>(f: F, name: S, override_: bool) -> Result<(), Error>
 where
     F: ToFunction<I, O>,
     F: Typed<I, O>,
@@ -323,7 +324,7 @@ mod tests {
 
         function::register_override(constfn, "constfn".to_owned(), true).unwrap();
         let func = Function::get("constfn").unwrap();
-        let func = func.to_boxed_fn::<dyn Fn() -> Result<i32>>();
+        let func = func.to_boxed_fn::<dyn Fn() -> Result<i32, Error>>();
         let ret = func().unwrap();
         assert_eq!(ret, 10);
     }

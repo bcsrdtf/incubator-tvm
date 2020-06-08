@@ -22,6 +22,7 @@ use proc_macro::TokenStream;
 mod external;
 mod import_module;
 mod object;
+mod util;
 
 #[proc_macro]
 pub fn import_module(input: TokenStream) -> TokenStream {

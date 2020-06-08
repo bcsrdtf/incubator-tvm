@@ -30,8 +30,9 @@ macro_rules! impl_device_attrs {
     };
 }
 
-external_func! {
-    fn get_device_attr(device_type: i32, device_id: i32, device_kind: i32) -> i32 as "runtime.GetDeviceAttr";
+crate::external! {
+    #[name("runtime.GetDeviceAttr")]
+    fn get_device_attr(device_type: i32, device_id: i32, device_kind: i32) -> i32;
 }
 
 impl ContextExt for Context {

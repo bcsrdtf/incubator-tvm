@@ -3,7 +3,7 @@ use std::convert::TryInto;
 use std::ffi::CString;
 
 use crate::errors::Error;
-use crate::external_func;
+use crate::external;
 
 use tvm_sys::{ArgValue, RetValue};
 
@@ -87,10 +87,12 @@ impl<'a> From<&ObjectRef> for ArgValue<'a> {
     }
 }
 
-external_func! {
-    fn debug_print(object: ObjectRef) -> CString as "ir.DebugPrint";
+external! {
+    #[name("ir.DebugPrint")]
+    fn debug_print(object: ObjectRef) -> CString;
 }
 
-external_func! {
-    fn as_text(object: ObjectRef) -> CString as "ir.TextPrinter";
-}
+// external! {
+//     #[name("ir.TextPrinter")]
+//     fn as_text(object: ObjectRef) -> CString;
+// }
