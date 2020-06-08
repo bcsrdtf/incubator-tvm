@@ -251,8 +251,7 @@ impl<'a> TryFrom<&ArgValue<'a>> for Function {
 ///
 /// ```
 /// # use tvm_rt::{ArgValue, RetValue};
-/// # use tvm_rt::function::{Function, register};
-/// # use anyhow::{Result};
+/// # use tvm_rt::function::{Function, Result, register};
 ///
 /// fn sum(x: i64, y: i64, z: i64) -> i64 {
 ///     x + y + z
@@ -317,6 +316,7 @@ mod tests {
     #[test]
     fn register_and_call_closure0() {
         use crate::function;
+        use function::Result;
 
         fn constfn() -> i64 {
             return 10;
@@ -324,7 +324,7 @@ mod tests {
 
         function::register_override(constfn, "constfn".to_owned(), true).unwrap();
         let func = Function::get("constfn").unwrap();
-        let func = func.to_boxed_fn::<dyn Fn() -> Result<i32, Error>>();
+        let func = func.to_boxed_fn::<dyn Fn() -> Result<i32>>();
         let ret = func().unwrap();
         assert_eq!(ret, 10);
     }

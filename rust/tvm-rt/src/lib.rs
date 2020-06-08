@@ -115,8 +115,8 @@ mod tests {
 
     #[test]
     fn set_error() {
-        let err = errors::EmptyArrayError;
-        set_last_error(&err.into());
-        assert_eq!(get_last_error().trim(), errors::EmptyArrayError.to_string());
+        let err = errors::NDArrayError::EmptyArray;
+        set_last_error(&err);
+        assert_eq!(get_last_error().trim(), errors::NDArrayError::EmptyArray.to_string());
     }
 }

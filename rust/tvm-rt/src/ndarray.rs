@@ -190,7 +190,7 @@ impl NDArray {
     /// assert_eq!(ndarray.to_vec::<i32>().unwrap(), data);
     /// ```
     pub fn to_vec<T>(&self) -> Result<Vec<T>, NDArrayError> {
-        if self.shape().is_some() {
+        if !self.shape().is_some() {
             return Err(NDArrayError::EmptyArray);
         }
         let earr = NDArray::empty(
@@ -308,7 +308,7 @@ macro_rules! impl_from_ndarray_rustndarray {
             type Error = NDArrayError;
 
             fn try_from(nd: &NDArray) -> Result<ArrayD<$type>, Self::Error> {
-                if nd.shape().is_some() {
+                if !nd.shape().is_some() {
                     return Err(NDArrayError::MissingShape);
                 }
                 assert_eq!(nd.dtype(), DataType::from_str($type_name)?, "Type mismatch");
@@ -323,7 +323,7 @@ macro_rules! impl_from_ndarray_rustndarray {
             type Error = NDArrayError;
 
             fn try_from(nd: &mut NDArray) -> Result<ArrayD<$type>, Self::Error> {
-                if nd.shape().is_some() {
+                if !nd.shape().is_some() {
                     return Err(NDArrayError::MissingShape);
                 };
                 assert_eq!(nd.dtype(), DataType::from_str($type_name)?, "Type mismatch");
