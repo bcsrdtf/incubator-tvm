@@ -29,9 +29,7 @@ pub use tvm_sys::{ffi, ArgValue, RetValue};
 
 use crate::{Module, errors};
 
-use super::function::Function;
-
-type Result<T> = std::result::Result<T, errors::Error>;
+use super::function::{Function, Result};
 
 pub trait ToBoxedFn {
     fn to_boxed_fn(func: &'static Function) -> Box<Self>;
@@ -39,9 +37,10 @@ pub trait ToBoxedFn {
 
 use std::convert::{TryFrom, TryInto};
 
-impl<O> ToBoxedFn for dyn Fn() -> Result<O>
+impl<E, O> ToBoxedFn for dyn Fn() -> Result<O>
 where
-    O: TryFrom<RetValue, Error = errors::Error>,
+    errors::Error: From<E>,
+    O: TryFrom<RetValue, Error = E>,
 {
     fn to_boxed_fn(func: &'static Function) -> Box<Self> {
         Box::new(move || {
@@ -53,10 +52,11 @@ where
     }
 }
 
-impl<A, O> ToBoxedFn for dyn Fn(A) -> Result<O>
+impl<E, A, O> ToBoxedFn for dyn Fn(A) -> Result<O>
 where
+    errors::Error: From<E>,
     A: Into<ArgValue<'static>>,
-    O: TryFrom<RetValue, Error = errors::Error>,
+    O: TryFrom<RetValue, Error = E>,
 {
     fn to_boxed_fn(func: &'static Function) -> Box<Self> {
         Box::new(move |a: A| {
@@ -69,11 +69,12 @@ where
     }
 }
 
-impl<A, B, O> ToBoxedFn for dyn Fn(A, B) -> Result<O>
+impl<E, A, B, O> ToBoxedFn for dyn Fn(A, B) -> Result<O>
 where
+    errors::Error: From<E>,
     A: Into<ArgValue<'static>>,
     B: Into<ArgValue<'static>>,
-    O: TryFrom<RetValue, Error = errors::Error>,
+    O: TryFrom<RetValue, Error = E>,
 {
     fn to_boxed_fn(func: &'static Function) -> Box<Self> {
         Box::new(move |a: A, b: B| {
@@ -87,12 +88,13 @@ where
     }
 }
 
-impl<A, B, C, O> ToBoxedFn for dyn Fn(A, B, C) -> Result<O>
+impl<E, A, B, C, O> ToBoxedFn for dyn Fn(A, B, C) -> Result<O>
 where
+    errors::Error: From<E>,
     A: Into<ArgValue<'static>>,
     B: Into<ArgValue<'static>>,
     C: Into<ArgValue<'static>>,
-    O: TryFrom<RetValue, Error = errors::Error>,
+    O: TryFrom<RetValue, Error = E>,
 {
     fn to_boxed_fn(func: &'static Function) -> Box<Self> {
         Box::new(move |a: A, b: B, c: C| {
@@ -107,13 +109,14 @@ where
     }
 }
 
-impl<A, B, C, D, O> ToBoxedFn for dyn Fn(A, B, C, D) -> Result<O>
+impl<E, A, B, C, D, O> ToBoxedFn for dyn Fn(A, B, C, D) -> Result<O>
 where
+    errors::Error: From<E>,
     A: Into<ArgValue<'static>>,
     B: Into<ArgValue<'static>>,
     C: Into<ArgValue<'static>>,
     D: Into<ArgValue<'static>>,
-    O: TryFrom<RetValue, Error = errors::Error>,
+    O: TryFrom<RetValue, Error = E>,
 {
     fn to_boxed_fn(func: &'static Function) -> Box<Self> {
         Box::new(move |a: A, b: B, c: C, d: D| {

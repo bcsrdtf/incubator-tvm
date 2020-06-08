@@ -138,7 +138,7 @@ impl Function {
     }
 
     /// Calls the function that created from `Builder`.
-    pub fn invoke<'a>(&self, arg_buf: Vec<ArgValue<'a>>) -> Result<RetValue, Error> {
+    pub fn invoke<'a>(&self, arg_buf: Vec<ArgValue<'a>>) -> Result<RetValue> {
         let num_args = arg_buf.len();
         let (mut values, mut type_codes): (Vec<ffi::TVMValue>, Vec<ffi::TVMTypeCode>) =
             arg_buf.iter().map(|arg| arg.to_tvm_value()).unzip();
@@ -192,7 +192,7 @@ impl From<Function> for RetValue {
 impl TryFrom<RetValue> for Function {
     type Error = Error;
 
-    fn try_from(ret_value: RetValue) -> Result<Function, Self::Error> {
+    fn try_from(ret_value: RetValue) -> Result<Function> {
         match ret_value {
             RetValue::FuncHandle(handle) => Ok(Function::new(handle)),
             _ => Err(Error::downcast(
@@ -212,7 +212,7 @@ impl<'a> From<Function> for ArgValue<'a> {
 impl<'a> TryFrom<ArgValue<'a>> for Function {
     type Error = Error;
 
-    fn try_from(arg_value: ArgValue<'a>) -> Result<Function, Self::Error> {
+    fn try_from(arg_value: ArgValue<'a>) -> Result<Function> {
         match arg_value {
             ArgValue::FuncHandle(handle) => Ok(Function::new(handle)),
             _ => Err(Error::downcast(
@@ -226,7 +226,7 @@ impl<'a> TryFrom<ArgValue<'a>> for Function {
 impl<'a> TryFrom<&ArgValue<'a>> for Function {
     type Error = Error;
 
-    fn try_from(arg_value: &ArgValue<'a>) -> Result<Function, Self::Error> {
+    fn try_from(arg_value: &ArgValue<'a>) -> Result<Function> {
         match arg_value {
             ArgValue::FuncHandle(handle) => Ok(Function::new(*handle)),
             _ => Err(Error::downcast(
@@ -264,7 +264,7 @@ impl<'a> TryFrom<&ArgValue<'a>> for Function {
 /// let ret = boxed_fn(10, 20, 30).unwrap();
 /// assert_eq!(ret, 60);
 /// ```
-pub fn register<F, I, O, S: Into<String>>(f: F, name: S) -> Result<(), Error>
+pub fn register<F, I, O, S: Into<String>>(f: F, name: S) -> Result<()>
 where
     F: ToFunction<I, O>,
     F: Typed<I, O>,
@@ -275,7 +275,7 @@ where
 /// Register a function with explicit control over whether to override an existing registration or not.
 ///
 /// See `register` for more details on how to use the registration API.
-pub fn register_override<F, I, O, S: Into<String>>(f: F, name: S, override_: bool) -> Result<(), Error>
+pub fn register_override<F, I, O, S: Into<String>>(f: F, name: S, override_: bool) -> Result<()>
 where
     F: ToFunction<I, O>,
     F: Typed<I, O>,

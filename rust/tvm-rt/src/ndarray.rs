@@ -147,7 +147,7 @@ impl NDArray {
     }
 
     /// Shows whether the underlying ndarray is contiguous in memory or not.
-    pub fn is_contiguous(&self) -> anyhow::Result<bool> {
+    pub fn is_contiguous(&self) -> Result<bool, crate::errors::Error> {
         Ok(match self.strides() {
             None => true,
             Some(strides) => {

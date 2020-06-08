@@ -21,12 +21,6 @@ use crate::DataType;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-#[error("Handle `{name}` is null.")]
-pub struct NullHandleError {
-    pub name: String,
-}
-
-#[derive(Debug, Error)]
 #[error("Function was not set in `function::Builder`")]
 pub struct FunctionNotFoundError;
 
@@ -62,6 +56,14 @@ pub enum Error {
     Null,
     #[error("failed to load module due to invalid path {0}")]
     ModuleLoadPath(String),
+    #[error("failed to convert String into CString due to embedded nul character")]
+    ToCString(#[from] std::ffi::NulError),
+    #[error("failed to convert CString into String")]
+    FromCString(#[from] std::ffi::IntoStringError),
+    #[error("Handle `{0}` is null.")]
+    NullHandle(String),
+    #[error("{0}")]
+    NDArray(#[from] NDArrayError),
 }
 
 impl Error {
