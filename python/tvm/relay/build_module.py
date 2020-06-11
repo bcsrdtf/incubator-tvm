@@ -53,6 +53,7 @@ def _update_target(target):
     return tgts
 
 
+# 将numpy的数据转换为relay的常数表达式
 def _convert_param_map(params):
     inputs = {}
     for name, param in params.items():

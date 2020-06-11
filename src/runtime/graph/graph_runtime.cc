@@ -52,6 +52,8 @@ inline size_t GetDataAlignment(const DLTensor& arr) {
  * \brief Run all the operations one by one.
  */
 void GraphRuntime::Run() {
+  printf("\"Run\" begin\n");
+  printf("op_execs_.size(): %ld\n",op_execs_.size());
   // setup the array and requirements.
   for (size_t i = 0; i < op_execs_.size(); ++i) {
     if (op_execs_[i]) op_execs_[i]();
@@ -363,10 +365,13 @@ std::pair<std::function<void()>, std::shared_ptr<GraphRuntime::OpArgs> > GraphRu
   } else if (param.func_name == "__copy") {
     // Perform cross device data copy.
     // Directly copy data from the input to the output.
+    printf("data copy\n");
     auto fexec = [arg_ptr]() {
+      printf("data copy begin\n");
       DLTensor* from = static_cast<DLTensor*>(arg_ptr->arg_values[0].v_handle);
       DLTensor* to = static_cast<DLTensor*>(arg_ptr->arg_values[1].v_handle);
       TVM_CCALL(TVMArrayCopyFromTo(from, to, nullptr));
+      printf("data copy finish\n");
     };
     return {fexec, arg_ptr};
   }
@@ -376,11 +381,20 @@ std::pair<std::function<void()>, std::shared_ptr<GraphRuntime::OpArgs> > GraphRu
   tvm::runtime::PackedFunc pf = module_.GetFunction(param.func_name, true);
   CHECK(pf != nullptr) << "no such function in module: " << param.func_name;
 
-  auto fexec = [arg_ptr, pf]() {
+  /* auto fexec = [arg_ptr, pf]() {
     TVMRetValue rv;
     TVMArgs targs(arg_ptr->arg_values.data(), arg_ptr->arg_tcodes.data(),
                   static_cast<int>(arg_ptr->arg_values.size()));
     pf.CallPacked(targs, &rv);
+  }; */
+  printf("%s\n",param.func_name.c_str());
+  auto fexec = [param, arg_ptr, pf]() {
+    printf("%s begin\n",param.func_name.c_str());
+    TVMRetValue rv;
+    TVMArgs targs(arg_ptr->arg_values.data(), arg_ptr->arg_tcodes.data(),
+                  static_cast<int>(arg_ptr->arg_values.size()));
+    pf.CallPacked(targs, &rv);
+    printf("%s finish\n", param.func_name.c_str());
   };
   return {fexec, arg_ptr};
 }
